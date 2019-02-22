@@ -19,22 +19,12 @@ public class CSVReader {
         CSVFormat.EXCEL.withSkipHeaderRecord())) {
 
       List<CSVRecord> records = parser.getRecords();
-      long limit = records.size() - 2L;
-      boolean first = true;
       Data data = new Data();
-      for (CSVRecord record : records) {
-
-        if (first) {
-          data.setLocalDate(AllUtils.parseLocalDate(record.get(1)));
-          first = false;
-          continue;
-        }
-        if (limit-- == 0) {
-          break;
-        }
-        data.getList().add(new Account(record.get(0), record.get(1)));
-      }
+      data.setLocalDate(AllUtils.parseLocalDate(records.get(0).get(1)));
       data.setPageCount(Long.valueOf(records.get(records.size() - 1).get(1)));
+      for(int n = 2;n <records.size() - 1; n++){
+        data.getList().add(new Account(records.get(n).get(0), records.get(n).get(1)));
+      }
       System.out.println(data);
     }
   }
