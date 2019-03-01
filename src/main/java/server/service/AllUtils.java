@@ -3,6 +3,11 @@ package server.service;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
+import org.joda.time.format.DateTimeFormat;
 import org.springframework.util.StringUtils;
 import server.obj.Account;
 import server.obj.Data;
@@ -78,5 +83,42 @@ public class AllUtils {
     }
     return LocalDate.parse(date, DateTimeFormatter.ofPattern(DATE_FORMAT));
   }
+
+  public static LocalDateTime parseLocalTime(String time, String zone) {
+    if (StringUtils.isEmpty(time)) {
+      return null;
+    }
+    try {
+      org.joda.time.format.DateTimeFormatter df = DateTimeFormat.forPattern("HH:mm:ss");
+      LocalTime start = df.withOffsetParsed().parseLocalTime(time);
+      DateTimeZone zone0 = DateTimeZone.forID(zone);
+      DateTime getExactTime = DateTime.now(zone0).withTime(start);
+      System.out
+          .printf("ParseLocalTime: Zone[%s], Time[%s] %n", zone, getExactTime.toLocalDateTime());
+      return getExactTime.toLocalDateTime();
+    } catch (Exception e) {
+      return null;
+    }
+  }
+
+  public static LocalDateTime getCurrentTime(String zone) {
+    DateTimeZone dateTimeZone = DateTimeZone.forID(zone);
+    LocalDateTime localDateTime = DateTime.now(dateTimeZone).toLocalDateTime();
+    System.out.printf("getCurrentTime: Zone[%s], Time[%s] %n", zone, localDateTime);
+    return localDateTime;
+  }
+
+  public static boolean validateTiming(String startTime, String endTime, String zoneId) {
+    try {
+      LocalDateTime startDate = parseLocalTime(startTime, zoneId);
+      LocalDateTime endDate = parseLocalTime(endTime, zoneId);
+      LocalDateTime currentTime = getCurrentTime(zoneId);
+      System.out.println((currentTime.isAfter(startDate) && currentTime.isBefore(endDate)));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return false;
+  }
+
 
 }

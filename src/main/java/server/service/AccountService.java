@@ -1,8 +1,8 @@
 package server.service;
 
-import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import server.obj.Data;
-
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.TimeZone;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -10,8 +10,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 
-@Path("/accountservice/")
+@Path("/accountservice")
 public class AccountService {
 
   @POST
@@ -19,12 +20,20 @@ public class AccountService {
   @Consumes(MediaType.MULTIPART_FORM_DATA)
   public Response uploadTextFile(Attachment attachment, @Context HttpServletRequest request) {
     try {
-      Data demo = AllUtils.getData(attachment);
-      System.out.println(demo);
+
+      Locale clientLocale = request.getLocale();
+      Calendar calendar = Calendar.getInstance(clientLocale);
+      TimeZone clientTimeZone = calendar.getTimeZone();
+      System.out.println(calendar);
+      System.out.println("=================");
+      System.out.println(clientTimeZone);
+
+      AllUtils.validateTiming("07:00:00", "20:00:00", clientTimeZone.getID());
     } catch (Exception ex) {
       ex.printStackTrace();
     } finally {
     }
-    return Response.ok().build();
+    return Response.ok("DONE").build();
   }
+
 }
