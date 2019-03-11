@@ -29,11 +29,15 @@
         <jaxrs:serviceBeans>
             <ref bean="accountService"/>
         </jaxrs:serviceBeans>
-<!--
+
         <jaxrs:providers>
+<!--
             <ref bean='jsonProvider'/>
-        </jaxrs:providers>
 -->
+            <bean class="server.exception.AppExceptionMapper"/>
+            <bean class="server.exception.ExceptionMapper"/>
+        </jaxrs:providers>
+
     </jaxrs:server>
 
 </beans>
